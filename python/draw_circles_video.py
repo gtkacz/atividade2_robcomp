@@ -9,6 +9,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import time
 import sys
+import auxiliar as aux
+
 
 # If you want to open a video, just change v2.VideoCapture(0) from 0 to the filename, just like below
 #cap = cv2.VideoCapture('hall_box_battery.mp4')
@@ -57,6 +59,7 @@ while(True):
     ret, frame = cap.read()
 
     # Convert the frame to grayscale
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # A gaussian blur to get rid of the noise in the image
     blur = cv2.GaussianBlur(gray,(5,5),0)
@@ -69,7 +72,8 @@ while(True):
 
 
     # Obtains a version of the edges image where we can draw in color
-    bordas_color = cv2.cvtColor(bordas, cv2.COLOR_GRAY2BGR)
+    #bordas_color = cv2.cvtColor(bordas, cv2.COLOR_GRAY2BGR)
+    #bordas_hsv = cv2.cvtColor(bordas_color, cv2.COLOR_BGR2HSV)
 
     # HoughCircles - detects circles using the Hough Method. For an explanation of
     # param1 and param2 please see an explanation here http://www.pyimagesearch.com/2014/07/21/detecting-circles-images-using-opencv-hough-circles/
@@ -80,27 +84,84 @@ while(True):
         circles = np.uint16(np.around(circles))
         for i in circles[0,:]:
             print(i)
+
+            hsv1, hsv2 = aux.ranges('#ff00ff')
+            hsv3, hsv4 = aux.ranges('#00ffff')
+
+            mask_magenta = cv2.inRange(hsv, hsv1, hsv2) 
+            mask_cyan = cv2.inRange(hsv, hsv3, hsv4)
+
+            kernal = np.ones((5, 5), "uint8") 
+
+            mask_magenta = cv2.dilate(mask_magenta, kernal)
+            res_magenta = cv2.bitwise_and(frame, frame, mask = mask_magenta)
+
+            mask_cyan = cv2.dilate(mask_cyan, kernal)
+            res_cyan = cv2.bitwise_and(frame, frame, mask = mask_cyan)
+
+            # Creating contour to track magenta
+            contours, hierarchy = cv2.findContours(mask_magenta, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE) 
+      
+            for pic, contour in enumerate(contours): 
+                area = cv2.contourArea(contour) 
+                if(area > 300): 
+                    # cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
+                    cv2.circle(frame,(i[0],i[1]),i[2],(0,0,255),2)
+                    # draw the center of the circle
+                    cv2.circle(frame,(i[0],i[1]),2,(0,255,0),3)
+                    
+                    cv2.putText(frame, "Magenta", (i[0], i[1]), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 0, 0)) 
+            
+            # Creating contour to track cyan
+            contours, hierarchy = cv2.findContours(mask_cyan, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE) 
+      
+            for pic, contour in enumerate(contours): 
+                area = cv2.contourArea(contour) 
+                if(area > 300): 
+                    # cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
+                    cv2.circle(frame,(i[0],i[1]),i[2],(255,0,0),2)
+                    # draw the center of the circle
+                    cv2.circle(frame,(i[0],i[1]),2,(0,255,0),3)
+                    
+                    cv2.putText(frame, "Ciano", (i[0], i[1]), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 0, 0)) 
+            
             # draw the outer circle
             # cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
-            cv2.circle(bordas_color,(i[0],i[1]),i[2],(0,255,0),2)
+            #cv2.circle(bordas_color,(i[0],i[1]),i[2],(0,0,255),2)
             # draw the center of the circle
-            cv2.circle(bordas_color,(i[0],i[1]),2,(0,0,255),3)
+            #cv2.circle(bordas_color,(i[0],i[1]),2,(0,255,0),3)
+
+            #fonte = cv2.FONT_HERSHEY_SIMPLEX
+            #cv2.putText(bordas_color,'Circulo',(i[0],i[1]), fonte, 1,(255,255,255),2, cv2.LINE_AA)
+
+            # draw the outer circle
+            #cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
+            #cv2.circle(bordas_color,(i[0],i[1]),i[2],(0,255,0),2)
+            
+            # draw the center of the circle
+            #cv2.circle(bordas_color,(i[0],i[1]),2,(0,0,255),3)
+    
+
+
+            
+            #font = cv2.FONT_HERSHEY_SIMPLEX
+            #cv2.putText(bordas_color,'Circulo',(i[0],i[1]), font, 1,(255,255,255),2, cv2.LINE_AA)
 
     # Draw a diagonal blue line with thickness of 5 px
     # cv2.line(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
-    cv2.line(bordas_color,(0,0),(511,511),(255,0,0),5)
+    # cv2.line(bordas_color,(0,0),(511,511),(255,0,0),5)
 
     # cv2.rectangle(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
-    cv2.rectangle(bordas_color,(384,0),(510,128),(0,255,0),3)
+    #cv2.rectangle(bordas_color,(384,0),(510,128),(0,255,0),3)
 
     # cv2.putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
     font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(bordas_color,'Press q to quit',(0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
+    cv2.putText(frame,'Press q to quit',(0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
 
     #More drawing functions @ http://docs.opencv.org/2.4/modules/core/doc/drawing_functions.html
 
     # Display the resulting frame
-    cv2.imshow('Detector de circulos',bordas_color)
+    cv2.imshow('Detector de circulos',frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
