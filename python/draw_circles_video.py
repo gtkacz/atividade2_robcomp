@@ -15,6 +15,12 @@ import auxiliar as aux
 # If you want to open a video, just change v2.VideoCapture(0) from 0 to the filename, just like below
 #cap = cv2.VideoCapture('hall_box_battery.mp4')
 
+magenta=np.array([210,255,127])
+hsv1_m, hsv2_m = aux.ranges(magenta)
+
+ciano=np.array([127,255,127])
+hsv1_c, hsv2_c = aux.ranges(ciano)
+
 if len(sys.argv) > 1:
     arg = sys.argv[1]
     try:
@@ -60,6 +66,7 @@ while(True):
 
     # Convert the frame to grayscale
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    frame_threshold = cv2.inRange(HSV, (low_H, low_S, low_V), (high_H, high_S, high_V))
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # A gaussian blur to get rid of the noise in the image
     blur = cv2.GaussianBlur(gray,(5,5),0)
