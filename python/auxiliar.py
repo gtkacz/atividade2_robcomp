@@ -89,8 +89,3 @@ def ranges(value):
     hsv[1:] = 50
     hsv2[1:] = 255
     return hsv, hsv2 
-
-
-
-
-
