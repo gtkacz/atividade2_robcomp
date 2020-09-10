@@ -91,7 +91,7 @@ while(True):
     # HoughCircles - detects circles using the Hough Method. For an explanation of
     # param1 and param2 please see an explanation here http://www.pyimagesearch.com/2014/07/21/detecting-circles-images-using-opencv-hough-circles/
     circles = None
-    circles=cv2.HoughCircles(bordas,cv2.HOUGH_GRADIENT,2,40,param1=50,param2=100,minRadius=5,maxRadius=60)
+    circles=cv2.HoughCircles(mask,cv2.HOUGH_GRADIENT,2,40,param1=50,param2=100,minRadius=5,maxRadius=100)
 
     if circles is not None:        
         circles = np.uint16(np.around(circles))
@@ -99,9 +99,9 @@ while(True):
             #print(i)
             # draw the outer circle
             # cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
-            cv2.circle(bordas_color,(i[0],i[1]),i[2],(0,255,0),2)
+            cv2.circle(mask,(i[0],i[1]),i[2],(0,255,0),2)
             # draw the center of the circle
-            centro=cv2.circle(bordas_color,(i[0],i[1]),2,(0,0,255),3)
+            centro=cv2.circle(mask,(i[0],i[1]),2,(0,0,255),3)
             #cv2.line(bordas_color,(0,centro),(511,511),(255,0,0),5)
 
     # Draw a diagonal blue line with thickness of 5 px
