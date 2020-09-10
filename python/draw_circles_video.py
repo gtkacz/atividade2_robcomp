@@ -73,7 +73,7 @@ while(True):
     hsv1_c, hsv2_c = aux.ranges(ciano)
     mask_c = cv2.inRange(hsv, hsv1_c, hsv2_c)
     
-    mask=mask_c + mask_m
+    mask = cv2.add(mask_c,mask_m)
     
     blur = cv2.GaussianBlur(mask,(5,5),0)
     
@@ -96,12 +96,13 @@ while(True):
     if circles is not None:        
         circles = np.uint16(np.around(circles))
         for i in circles[0,:]:
-            print(i)
+            #print(i)
             # draw the outer circle
             # cv2.circle(img, center, radius, color[, thickness[, lineType[, shift]]])
             cv2.circle(bordas_color,(i[0],i[1]),i[2],(0,255,0),2)
             # draw the center of the circle
-            cv2.circle(bordas_color,(i[0],i[1]),2,(0,0,255),3)
+            centro=cv2.circle(bordas_color,(i[0],i[1]),2,(0,0,255),3)
+            #cv2.line(bordas_color,(0,centro),(511,511),(255,0,0),5)
 
     # Draw a diagonal blue line with thickness of 5 px
     # cv2.line(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
@@ -112,12 +113,12 @@ while(True):
 
     # cv2.putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
     font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(bordas_color,'Press q to quit',(0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
+    #cv2.putText(bordas_color,'Press q to quit',(0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
 
     #More drawing functions @ http://docs.opencv.org/2.4/modules/core/doc/drawing_functions.html
 
     # Display the resulting frame
-    cv2.imshow('Detector de circulos',bordas_color)
+    cv2.imshow('Detector de circulos',mask)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

@@ -67,7 +67,7 @@ if __name__ == "__main__":
         
         if ret == False:
             print("Problema para capturar o frame da câmera")
-            continue
+            break
 
         # Our operations on the frame come here
         frame_rgb = frame #cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) 
