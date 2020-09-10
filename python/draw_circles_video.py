@@ -12,7 +12,7 @@ import sys
 import auxiliar as aux
 
 # If you want to open a video, just change v2.VideoCapture(0) from 0 to the filename, just like below
-'''cap = cv2.VideoCapture('WIN_20200909_18_56_30_Pro.mp4')
+
 
 if len(sys.argv) > 1:
     arg = sys.argv[1]
@@ -21,9 +21,9 @@ if len(sys.argv) > 1:
     except:
         input_source=str(arg) # se for nome de arquivo
 else:   
-    input_source = 0'''
+    input_source = 0
 
-cap = cv2.VideoCapture('WIN_20200909_18_56_30_Pro.mp4')
+cap = cv2.VideoCapture(input_source)
 
 
 # Parameters to use when opening the webcam.
@@ -102,7 +102,7 @@ while(True):
             cv2.circle(bordas_color,(i[0],i[1]),i[2],(0,255,0),2)
             # draw the center of the circle
             centro=cv2.circle(bordas_color,(i[0],i[1]),2,(0,0,255),3)
-            #cv2.line(bordas_color,(0,centro),(511,511),(255,0,0),5)
+            cv2.line(bordas_color,(i[0], i[1]),(i[1],i[2]),(255,0,0),5)
 
     # Draw a diagonal blue line with thickness of 5 px
     # cv2.line(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
@@ -118,7 +118,7 @@ while(True):
     #More drawing functions @ http://docs.opencv.org/2.4/modules/core/doc/drawing_functions.html
 
     # Display the resulting frame
-    cv2.imshow('Detector de circulos',mask)
+    cv2.imshow('Detector de circulos',bordas_color)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
