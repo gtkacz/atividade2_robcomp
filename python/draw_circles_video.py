@@ -52,6 +52,10 @@ def auto_canny(image, sigma=0.33):
     # return the edged image
     return edged
 
+def encontra_distancia(f, H, h):
+    d = (H*f)/h
+    return d
+
 
 
 while(True):
