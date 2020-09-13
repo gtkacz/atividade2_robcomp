@@ -11,6 +11,8 @@ import time
 import sys
 import auxiliar as aux
 import math
+import imutils
+from imutils import paths
 
 # If you want to open a video, just change v2.VideoCapture(0) from 0 to the filename, just like below
 
@@ -52,9 +54,10 @@ def auto_canny(image, sigma=0.33):
     # return the edged image
     return edged
 
-def encontra_distancia(f, H, h):
-    d = (H*f)/h
-    return d
+D = 30
+H = 7.8
+h = 560 
+f = (h*D)/H
 
 
 
@@ -90,8 +93,10 @@ while(True):
     bordas_c = auto_canny(blur_cya)
 
     bordas = cv2.add(bordas_c, bordas_m)
+    
+    
     # Obtains a version of the edges image where we can draw in color
-    bordas_color = cv2.cvtColor(bordas, cv2.COLOR_GRAY2BGR)
+    bordas_color = cv2.cvtColor(bordas, cv2.COLOR_GRAY2BGR)   
 
     circles_mag = []
     circles_cya = []
@@ -146,6 +151,10 @@ while(True):
     if center_mag[0] != None and center_mag[1] != None or center_cyan[0] != None and center_cyan[1] != None:
         try:
             cv2.line(bordas_color, center_mag, center_cyan, (255, 255, 255), 6)
+            h=abs(center_mag - center_cyan)
+            d = (H*f)/h
+            print(b)
+            cv2.putText(bordas_color,'Distância -> %.1f' % (d),(0,300), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255),2,cv2.LINE_AA)
             ang = math.atan((ym - yc) / (xm - xc))
         except:
             pass
