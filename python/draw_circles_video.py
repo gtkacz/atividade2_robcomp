@@ -65,29 +65,24 @@ while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
 
-    # Convert the frame to grayscale
+    # Convert the frame to grayscale and hsv
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # A gaussian blur to get rid of the noise in the image
-    #blur = cv2.GaussianBlur(gray,(5,5),0)
-    
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     
+
     magenta='#FF00FE'
     hsv1_m, hsv2_m = aux.ranges(magenta)
     mask_m = cv2.inRange(hsv, hsv1_m, hsv2_m)
-    
 
     ciano='#00FFFF'
     hsv1_c, hsv2_c = aux.ranges(ciano)
     mask_c = cv2.inRange(hsv, hsv1_c, hsv2_c)
-    
-    #mask = cv2.add(mask_c,mask_m)
+
     
     blur_mag = cv2.GaussianBlur(mask_m,(5,5),0)
     blur_cya = cv2.GaussianBlur(mask_c,(5,5),0)
-    
-    blur = cv2.add(blur_cya, blur_mag)
-    #blur = gray
+    blur = cv2.add(blur_cya, blur_mag) 
+
     # Detect the edges present in the image
     bordas_m = auto_canny(blur_mag)
     bordas_c = auto_canny(blur_cya)
@@ -151,22 +146,19 @@ while(True):
     if center_mag[0] != None and center_mag[1] != None or center_cyan[0] != None and center_cyan[1] != None:
         try:
             cv2.line(bordas_color, center_mag, center_cyan, (255, 255, 255), 6)
-            h=abs(center_mag - center_cyan)
+            h=abs(center_mag[1] - center_cyan[1] + center_mag[0] - center_cyan[0])
             d = (H*f)/h
-            cv2.putText(bordas_color,'Distância -> %.1f' % (d),(0,300), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255),2,cv2.LINE_AA)
+            cv2.putText(bordas_color,'Distance -> %.1f' %d,(0,300), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255),2,cv2.LINE_AA)
             ang = math.atan((ym - yc) / (xm - xc))
         except:
             pass
 
     if ang != None:
-        cv2.putText(bordas_color,'Ângulo -> %.1f' % (math.degrees(ang)),(0,300), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255),2,cv2.LINE_AA)
-    # cv2.line(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
+        cv2.putText(bordas_color,'Angle -> %.1f' % (math.degrees(ang)),(0,450), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255),2,cv2.LINE_AA)
 
     # cv2.putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]])
     font = cv2.FONT_HERSHEY_SIMPLEX
     cv2.putText(bordas_color,'Press q to quit',(0,50), font, 1,(255,255,255),2,cv2.LINE_AA)
-
-    #More drawing functions @ http://docs.opencv.org/2.4/modules/core/doc/drawing_functions.html
     
     # Display the resulting frame
     cv2.imshow('Detector de circulos',bordas_color)
