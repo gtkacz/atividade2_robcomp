@@ -11,8 +11,8 @@ import time
 import sys
 import auxiliar as aux
 import math
-import imutils
-from imutils import paths
+#import imutils
+#from imutils import paths
 
 # If you want to open a video, just change v2.VideoCapture(0) from 0 to the filename, just like below
 
@@ -54,8 +54,8 @@ def auto_canny(image, sigma=0.33):
     # return the edged image
     return edged
 
-D = 30
-H = 7.8
+D = 40
+H = float(input("Digite a distância real entre os centros dos círculos em cm: "))
 h = 560 
 f = (h*D)/H
 
@@ -153,7 +153,6 @@ while(True):
             cv2.line(bordas_color, center_mag, center_cyan, (255, 255, 255), 6)
             h=abs(center_mag - center_cyan)
             d = (H*f)/h
-            print(b)
             cv2.putText(bordas_color,'Distância -> %.1f' % (d),(0,300), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255),2,cv2.LINE_AA)
             ang = math.atan((ym - yc) / (xm - xc))
         except:
