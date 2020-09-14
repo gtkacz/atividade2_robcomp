@@ -86,6 +86,6 @@ def ranges(value):
     hsv2 = np.copy(hsv)
     hsv[0] = max(0, hsv[0]- 30)
     hsv2[0] = min(180, hsv[0]+ 30)
-    hsv[1:] = 40
+    hsv[1:] = 50
     hsv2[1:] = 255
     return hsv, hsv2 
